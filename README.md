@@ -1,6 +1,6 @@
 # Taller 1 - Introduccion al Desarrollo Web Movil
 
-## Equipo SmartCoders
+## Nombre del Equipo SmartCoders
 
 # Integrantes
 Bastian Salinas, 21.848.994-k 
@@ -16,3 +16,4 @@ Aplicacion web movil responsiva que consume 4 APIs publicas
 para mostrar informacion dinamica de manera clara y accesible.
 Proyecto del ramo Introduccion al Desarrollo Web Movil - UCN 2025
 
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/0925bbb5-e158-4a53-a7a7-44f48cb05083" />
