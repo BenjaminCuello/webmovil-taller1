@@ -1,5 +1,5 @@
 # Nombre de grupo:
-  oda
+- Los Noporolopo
 # Integrantes
 Bastian Salinas, 21.848.994-k 
 
