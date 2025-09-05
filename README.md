@@ -1,7 +1,7 @@
 # Nombre de grupo:
-  oda
+- Los Noporolopo
 # Integrantes
-Bastian Salinas, 
+Bastian Salinas, 21.848.994-k 
 
 Benjamín Cuello, 21.682.135-1
 
