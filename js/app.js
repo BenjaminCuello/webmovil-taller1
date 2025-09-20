@@ -81,32 +81,68 @@ if (pagina === "detalle.html") {
     titulo.textContent = `Detalle de ${recurso}`;
 
     if (recurso === "pokemon") {
-        fetch("https://pokeapi.co/api/v2/pokemon?limit=10")
+        fetch("https://pokeapi.co/api/v2/pokemon?limit=150")
             .then(res => res.json())
             .then(data => {
-                contenedor.innerHTML = data.results
-                    .map(p => `
-                        <div class="bg-white shadow p-4 rounded-lg">
-                          <p class="capitalize">🔹 ${p.name}</p>
-                        </div>
-                    `).join("");
+                const random = data.results
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, 10);
+
+                // Pedimos la info detallada de cada Pokémon
+                return Promise.all(
+                    random.map(p =>
+                        fetch(p.url)
+                            .then(res => res.json())
+                            .then(info => `
+                            <div class="bg-white shadow p-4 rounded-lg text-center">
+                                <img src="${info.sprites.front_default}" 
+                                     alt="${info.name}" 
+                                     class="mx-auto w-20 h-20">
+                                <h3 class="capitalize font-semibold">${info.name}</h3>
+                                <p>Altura: ${info.height}</p>
+                                <p>Peso: ${info.weight}</p>
+                                <p>Tipo: ${info.types.map(t => t.type.name).join(", ")}</p>
+                            </div>
+                        `)
+                    )
+                );
+            })
+            .then(cards => {
+                contenedor.innerHTML = cards.join("");
+            })
+            .catch(err => {
+                console.error("Error Pokémon detalle:", err);
+                contenedor.innerHTML = `<p class="text-red-500">Error al cargar Pokémon</p>`;
             });
     }
 
+
+
     if (recurso === "paises") {
-        fetch("https://restcountries.com/v3.1/all")
+        fetch("https://restcountries.com/v3.1/all?fields=name,capital,region,population,flags")
             .then(res => res.json())
             .then(data => {
                 contenedor.innerHTML = data
-                    .slice(0, 10)
+                    .filter(p => p.capital && p.flags) // robustez
+                    .slice(0, 12)
                     .map(p => `
-                        <div class="bg-white shadow p-4 rounded-lg">
-                          <h3 class="font-semibold">${p.name.common}</h3>
-                          <p>🌍 Capital: ${p.capital ? p.capital[0] : "N/A"}</p>
+                    <div class="bg-white shadow p-4 rounded-lg flex items-center gap-4">
+                        <img src="${p.flags.png}" alt="Bandera de ${p.name.common}" class="w-10 h-7 border">
+                        <div>
+                            <h3 class="font-semibold">${p.name.common}</h3>
+                            <p>Capital: ${p.capital[0]}</p>
+                            <p>Región: ${p.region}</p>
+                            <p>Población: ${p.population.toLocaleString("es-CL")}</p>
                         </div>
-                    `).join("");
+                    </div>
+                `)
+                    .join("");
+            })
+            .catch(() => {
+                contenedor.innerHTML = `<p class="text-red-500">Error al cargar países</p>`;
             });
     }
+
 
     if (recurso === "clima") {
         fetch("https://api.open-meteo.com/v1/forecast?latitude=-33.45&longitude=-70.66&current_weather=true")
@@ -123,16 +159,21 @@ if (pagina === "detalle.html") {
     }
 
     if (recurso === "feriados") {
-        fetch("https://apis.digital.gob.cl/fl/feriados/2025")
+        fetch("https://apis.digital.gob.cl/fl/feriados")
             .then(res => res.json())
             .then(data => {
                 contenedor.innerHTML = data
                     .map(f => `
-                        <div class="bg-white shadow p-4 rounded-lg">
-                          <p>📅 ${f.fecha}</p>
-                          <p>${f.nombre}</p>
-                        </div>
-                    `).join("");
+                    <div class="bg-white shadow p-4 rounded-lg">
+                        <p>📅 ${f.fecha}</p>
+                        <p>${f.nombre}</p>
+                    </div>
+                `)
+                    .join("");
+            })
+            .catch(() => {
+                contenedor.innerHTML = `<p class="text-red-500">Error al cargar feriados</p>`;
             });
     }
+
 }
