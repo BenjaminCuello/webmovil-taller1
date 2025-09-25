@@ -5,16 +5,16 @@ const nf = new Intl.NumberFormat('es-CL');
 const withTimeout = (promise, ms = 10000) => {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), ms);
-    return promise(ctrl.senial)
+    return promise(ctrl.signal)
         .finally(() => clearTimeout(t));
 };
 
 const geocodeCache = new Map(); // aqui la idea es que mande ciudad -> {lat, lon, label}
 
 const api = {
-    pokemon: async (nombreOId) => {
-        return withTimeout(async (senial) => {
-            const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${encodeURIComponent(nombreOId)}`, { senial });
+    pokemon: async (nameOrId) => {
+        return withTimeout(async (signal) => {
+            const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${encodeURIComponent(nameOrId)}`, { signal });
             if(!res.ok) throw new Error('Pokémon no encontrado');
             return res.json();
         });
@@ -25,10 +25,10 @@ const api = {
         return Promise.all(ids.map(id => api.pokemon(id)));
     },
 
-    paisesPorNombre: async (nombre) => {
-        const url = `https://restcountries.com/v3.1/nombre/${encodeURIComponent(nombre)}?fields=nombre,flags,region,capital,population,cca2`;
-        return withTimeout(async (senial) => {
-            const res = await fetch(url, { senial });
+    paisesPorNombre: async (name) => {
+        const url = `https://restcountries.com/v3.1/name/${encodeURIComponent(name)}?fields=name,flags,region,capital,population,cca2`;
+        return withTimeout(async (signal) => {
+            const res = await fetch(url, { signal });
             if(!res.ok) throw new Error('País no encontrado');
             return res.json();
         });
@@ -41,46 +41,46 @@ const api = {
     },
 
     meteoCurrent: async (lat, lon) => {
-        const sp = new URLSearchparametros({
+        const sp = new URLSearchParams({
             latitude: lat, longitude: lon,
             current: 'temperature_2m,wind_speed_10m'
         });
-        return withTimeout(async (senial) => {
-            const res = await fetch(`https://api.open-meteo.com/v1/forecast?${sp.toString()}`, { senial });
+        return withTimeout(async (signal) => {
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?${sp.toString()}`, { signal });
             if(!res.ok) throw new Error('No se pudo obtener el clima');
             return res.json();
         });
     },
 
-    geocodeCity: async (nombre) => {
-        const key = nombre.trim().toLowerCase();
+    geocodeCity: async (name) => {
+        const key = name.trim().toLowerCase();
         if (geocodeCache.has(key)) return geocodeCache.get(key);
 
-        const sp = new URLSearchparametros({ nombre, count: 1, language: 'es', format: 'json' });
-        const dato = await withTimeout(async (senial) => {
-            const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?${sp.toString()}`, { senial });
+        const sp = new URLSearchParams({ name, count: 1, language: 'es', format: 'json' });
+        const dato = await withTimeout(async (signal) => {
+            const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?${sp.toString()}`, { signal });
             if (!res.ok) throw new Error('No se pudo geocodificar la ciudad');
             return res.json();
         });
 
-        if (!dato.resultados || dato.resultados.length === 0) throw new Error('Ciudad no encontrada');
-        const c = dato.resultados[0];
-        const val = { lat: c.latitude, lon: c.longitude, label: `${c.nombre}${c.country_code ? ', ' + c.country_code : ''}` };
+        if (!dato.results || dato.results.length === 0) throw new Error('Ciudad no encontrada');
+        const c = dato.results[0];
+        const val = { lat: c.latitude, lon: c.longitude, label: `${c.name}${c.country_code ? ', ' + c.country_code : ''}` };
         geocodeCache.set(key, val);
         return val;
     },
 
     feriados: async (iso2, year) => {
-        return withTimeout(async (senial) => {
-            const res = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/${iso2}`, { senial });
+        return withTimeout(async (signal) => {
+            const res = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/${iso2}`, { signal });
             if(!res.ok) throw new Error('No se pudo obtener feriados');
             return res.json();
         });
     }
 };
 
-async function buscarClimaCiudad(nombre){
-    const g = await api.geocodeCity(nombre);
+async function buscarClimaCiudad(name){
+    const g = await api.geocodeCity(name);
     const d = await api.meteoCurrent(g.lat, g.lon);
     return { g, d };
 }
@@ -88,7 +88,7 @@ async function buscarClimaCiudad(nombre){
 // UI helpers
 function cardMini(inner){
     const div = document.createElement('div');
-    div.classnombre = 'flex items-center justify-between p-3 rounded-lg bg-gray-50 border';
+    div.className = 'flex items-center justify-between p-3 rounded-lg bg-gray-50 border';
     div.innerHTML = inner;
     return div;
 }
@@ -100,8 +100,8 @@ function setAriaLive(ids = []) {
     });
 }
 
-function agregarEnterEnClick(inpututSel, btnSel){
-    const input = q(inpututSel), btn = q(btnSel);
+function agregarEnterEnClick(inputSel, btnSel){
+    const input = q(inputSel), btn = q(btnSel);
     if (!input || !btn) return;
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') btn.click();
@@ -124,8 +124,8 @@ function onIndex(){
             list.forEach(p => {
                 const temp = `
           <div class="flex items-center gap-2">
-            <img src="${p.sprites.front_default}" alt="${p.nombre}" class="w-8 h-8"/>
-            <strong class="capitalize">${p.nombre}</strong>
+            <img src="${p.sprites.front_default}" alt="${p.name}" class="w-8 h-8"/>
+            <strong class="capitalize">${p.name}</strong>
           </div>
           <span class="text-xs text-gray-600">#${p.id}</span>`;
                 pokeBox.appendChild(cardMini(temp));
@@ -137,13 +137,13 @@ function onIndex(){
     api.paisesMuestra()
         .then(list => {
             paisBox.innerHTML = '';
-            list.forEach(c => {
+            list.filter(Boolean).forEach(c => {
                 const temp = `
-          <div class="flex items-center gap-2">
-            <img src="${c.flags?.png || c.flags?.svg || ''}" alt="flag" class="w-6 h-4 object-cover rounded-sm"/>
-            <strong>${c.nombre.common}</strong>
-          </div>
-          <span class="text-xs text-gray-600">${c.region}</span>`;
+        <div class="flex items-center gap-2">
+          <img src="${c.flags?.png || c.flags?.svg || ''}" alt="flag" class="w-6 h-4 object-cover rounded-sm"/>
+          <strong>${c.name?.common || '—'}</strong>
+        </div>
+        <span class="text-xs text-gray-600">${c.region || '—'}</span>`;
                 paisBox.appendChild(cardMini(temp));
             });
         })
@@ -182,7 +182,7 @@ function onIndex(){
             holiBox.innerHTML = '';
             list.slice(0,3).forEach(h => {
                 const temp = `
-          <span><strong>${h.localnombre}</strong> <small class="text-gray-600">(${h.nombre})</small></span>
+          <span><strong>${h.localName}</strong> <small class="text-gray-600">(${h.name})</small></span>
           <span class="text-xs">${h.date}</span>`;
                 holiBox.appendChild(cardMini(temp));
             });
@@ -199,7 +199,7 @@ function buildControles(recurso){
     if(recurso === 'pokemon'){
         box.innerHTML = `
       <div class="flex flex-col sm:flex-row gap-2">
-        <inputut id="poke-q" class="border rounded px-3 py-2 flex-1" placeholder="Nombre o ID (ej. pikachu o 25)"/>
+        <input id="poke-q" class="border rounded px-3 py-2 flex-1" placeholder="Nombre o ID (ej. pikachu o 25)"/>
         <button id="poke-go" class="px-4 py-2 bg-blue-600 text-white rounded">Buscar</button>
         <span id="poke-status" class="text-sm text-gray-600"></span>
       </div>`;
@@ -208,7 +208,7 @@ function buildControles(recurso){
     if(recurso === 'paises'){
         box.innerHTML = `
       <div class="flex flex-col sm:flex-row gap-2">
-        <inputut id="country-q" class="border rounded px-3 py-2 flex-1" placeholder="Nombre (ej. Chile)"/>
+        <input id="country-q" class="border rounded px-3 py-2 flex-1" placeholder="Nombre (ej. Chile)"/>
         <button id="country-go" class="px-4 py-2 bg-blue-600 text-white rounded">Buscar</button>
         <span id="country-status" class="text-sm text-gray-600"></span>
       </div>`;
@@ -218,7 +218,7 @@ function buildControles(recurso){
         box.innerHTML = `
       <div class="space-y-2">
         <div class="flex flex-col sm:flex-row gap-2">
-          <inputut id="city" class="border rounded px-3 py-2 flex-1" placeholder="Ciudad (ej. La Serena)"/>
+          <input id="city" class="border rounded px-3 py-2 flex-1" placeholder="Ciudad (ej. La Serena)"/>
           <button id="meteo-go" class="px-4 py-2 bg-blue-600 text-white rounded">Consultar</button>
         </div>
         <div class="flex flex-wrap gap-2">
@@ -233,8 +233,8 @@ function buildControles(recurso){
     if(recurso === 'feriados'){
         box.innerHTML = `
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 items-center">
-        <inputut id="iso" class="border rounded px-3 py-2 uppercase" placeholder="ISO2 (ej. CL)" value="CL" maxlength="2"/>
-        <inputut id="anio" class="border rounded px-3 py-2" placeholder="Año (ej. 2025)" value="2025" maxlength="4"/>
+        <input id="iso" class="border rounded px-3 py-2 uppercase" placeholder="ISO2 (ej. CL)" value="CL" maxlength="2"/>
+        <input id="anio" class="border rounded px-3 py-2" placeholder="Año (ej. 2025)" value="2025" maxlength="4"/>
         <button id="holi-go" class="px-4 py-2 bg-blue-600 text-white rounded">Consultar</button>
         <span id="holi-status" class="text-sm text-gray-600 sm:col-span-3"></span>
       </div>`;
@@ -246,7 +246,7 @@ function buildControles(recurso){
 
 // Detalle por recurso
 function onDetalle(){
-    const parametros = new URLSearchparametros(location.search);
+    const parametros = new URLSearchParams(location.search);
     const recurso = parametros.get('recurso') || 'pokemon';
     const titulo = q('#titulo-detalle');
     if (titulo) titulo.textContent = `Detalle — ${recurso}`;
@@ -272,10 +272,10 @@ function onDetalle(){
                 const p = await api.pokemon(term || 'pikachu');
                 out.innerHTML = `
           <div class="flex gap-4 items-center">
-            <img src="${p.sprites.front_default}" class="w-20 h-20" alt="${p.nombre}"/>
+            <img src="${p.sprites.front_default}" class="w-20 h-20" alt="${p.name}"/>
             <div>
-              <h3 class="text-lg font-semibold capitalize">${p.nombre} <small class="text-gray-600">#${p.id}</small></h3>
-              <p class="text-sm text-gray-700">Tipos: ${p.types.map(t=>t.type.nombre).join(', ')}</p>
+              <h3 class="text-lg font-semibold capitalize">${p.name} <small class="text-gray-600">#${p.id}</small></h3>
+              <p class="text-sm text-gray-700">Tipos: ${p.types.map(t=>t.type.name).join(', ')}</p>
               <p class="text-sm text-gray-700">Altura: ${p.height} · Peso: ${p.weight}</p>
             </div>
           </div>`;
@@ -297,7 +297,7 @@ function onDetalle(){
           <div class="space-y-2">
             <div class="flex items-center gap-3">
               <img src="${c.flags?.png || c.flags?.svg || ''}" class="w-8 h-5 object-cover rounded-sm" alt="flag"/>
-              <h3 class="text-lg font-semibold">${c.nombre.common} <small class="text-gray-600">(${c.cca2})</small></h3>
+              <h3 class="text-lg font-semibold">${c.name.common} <small class="text-gray-600">(${c.cca2})</small></h3>
             </div>
             <p class="text-sm text-gray-700">${c.region} · Capital: ${c.capital? c.capital.join(', ') : '—'}</p>
             <p class="text-sm text-gray-700">Población: ${nf.format(c.population)}</p>
@@ -383,7 +383,7 @@ function onDetalle(){
                 const list = await api.feriados(iso, year);
                 out.innerHTML = list.slice(0,10).map(h => `
           <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50 border">
-            <span><strong>${h.localnombre}</strong> <small class="text-gray-600">(${h.nombre})</small></span>
+            <span><strong>${h.localName}</strong> <small class="text-gray-600">(${h.name})</small></span>
             <span class="text-xs">${h.date}</span>
           </div>`).join('');
                 if (s) s.textContent = '';
@@ -393,6 +393,6 @@ function onDetalle(){
 }
 
 // Router
-const page = location.pathnombre.split('/').pop();
+const page = location.pathname.split('/').pop();
 if(page === 'index.html' || page === '') onIndex();
 if(page === 'detalle.html') onDetalle();
