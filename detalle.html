@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Detalle - InfoMóvil</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-gray-50 text-gray-900">
 
@@ -14,18 +15,16 @@
     <h1 id="titulo-detalle" class="text-xl font-bold">Detalle</h1>
 </header>
 
-<!-- Contenido dinámico -->
-<main class="p-4">
-    <div id="contenedor-detalle" class="grid gap-4">
-        <!-- Aquí se insertan los datos dinámicos según recurso -->
+<main class="p-4 max-w-3xl mx-auto space-y-6">
+    <section id="controles" class="bg-white rounded-xl shadow p-4"></section>
+
+    <section id="contenedor-detalle" class="bg-white rounded-xl shadow p-4 space-y-3"></section>
+
+    <div class="text-center">
+        <a href="index.html" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Volver</a>
     </div>
 </main>
 
-<!-- Botón volver -->
-<div class="p-4 text-center">
-    <a href="index.html" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Volver</a>
-</div>
-
+<script src="js/app.js" type="module"></script>
 </body>
 </html>
-<script src="js/app.js"></script>
