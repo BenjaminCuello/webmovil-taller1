@@ -30,4 +30,3 @@ https://docs.google.com/spreadsheets/d/1Ytlmfwt0y6sD7nvuvEeluyWZASoxuv80GKblEttJ
 2. [REST Countries](https://restcountries.com/)
 3. [Open-Meteo](https://open-meteo.com/en/docs)
 4. [Nager.Date (Public Holidays)](https://date.nager.at/Api)
-

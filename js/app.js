@@ -1,30 +1,6 @@
 ﻿// Utils y Config
 const q = (sel, root=document) => root.querySelector(sel);
 const nf = new Intl.NumberFormat('es-CL');
-const recursoInfo = {
-    pokemon: {
-        nombre: 'Pokémon',
-        descripcion: 'Busca un Pokémon por nombre o número para revisar sus datos base.',
-        placeholder: 'pikachu'
-    },
-    paises: {
-        nombre: 'Países',
-        descripcion: 'Consulta región, capital y población de cualquier país que te interese.',
-        placeholder: 'Chile'
-    },
-    clima: {
-        nombre: 'Clima',
-        descripcion: 'Obtén el clima actual y el viento en distintas ciudades sin recargar la página.',
-        placeholder: 'La Serena',
-        ciudades: ['La Serena', 'Coquimbo', 'Calama']
-    },
-    feriados: {
-        nombre: 'Feriados',
-        descripcion: 'Explora los feriados oficiales por país y año.',
-        iso: 'CL',
-        anio: new Date().getFullYear()
-    }
-};
 
 const withTimeout = (promise, ms = 10000) => {
     const ctrl = new AbortController();
@@ -59,7 +35,7 @@ const api = {
     },
 
     paisesMuestra: async () => {
-        const nombres = ['Chile','Argentina','Perú'];
+        const nombres = ['Chile','Argentina','Peru'];
         const arr = await Promise.all(nombres.map(n => api.paisesPorNombre(n).then(x => x[0])));
         return arr;
     },
@@ -112,7 +88,7 @@ async function buscarClimaCiudad(name){
 // UI helpers
 function cardMini(inner){
     const div = document.createElement('div');
-    div.className = 'card-mini';
+    div.className = 'flex items-center justify-between p-3 rounded-lg bg-gray-50 border';
     div.innerHTML = inner;
     return div;
 }
@@ -272,218 +248,148 @@ function buildControles(recurso){
 function onDetalle(){
     const parametros = new URLSearchParams(location.search);
     const recurso = parametros.get('recurso') || 'pokemon';
-    const info = recursoInfo[recurso] || recursoInfo.pokemon;
-
     const titulo = q('#titulo-detalle');
-    if (titulo) titulo.textContent = `Detalle — ${info.nombre}`;
-
-    const descripcion = q('#descripcion-detalle');
-    if (descripcion) descripcion.textContent = info.descripcion;
-
+    if (titulo) titulo.textContent = `Detalle — ${recurso}`;
     buildControles(recurso);
+    setAriaLive(['#poke-status', '#country-status', '#meteo-status', '#holi-status']);
 
     const out = q('#contenedor-detalle');
     if (!out) return;
 
+    // Enter para inputs
     agregarEnterEnClick('#poke-q', '#poke-go');
     agregarEnterEnClick('#country-q', '#country-go');
     agregarEnterEnClick('#city', '#meteo-go');
     agregarEnterEnClick('#anio', '#holi-go');
     agregarEnterEnClick('#iso', '#holi-go');
 
-    if (recurso === 'pokemon') {
-        const btn = q('#poke-go');
-        const input = q('#poke-q');
-        const status = q('#poke-status');
-        if (!btn) return;
-
-        async function renderPokemon(term) {
-            const query = (term || input?.value || '').trim() || info.placeholder;
-            out.innerHTML = '<p class="text-slate-400">Buscando información...</p>';
-            if (status) status.textContent = `Cargando ${query}...`;
-            try {
-                const p = await api.pokemon(query);
+    if(recurso === 'pokemon'){
+        const btn = q('#poke-go'); if (!btn) return;
+        btn.addEventListener('click', async () => {
+            const s = q('#poke-status');
+            const term = (q('#poke-q')?.value || '').trim();
+            out.innerHTML = ''; if (s) s.textContent = 'Cargando…';
+            try{
+                const p = await api.pokemon(term || 'pikachu');
                 out.innerHTML = `
-          <article class="grid gap-6 sm:grid-cols-[auto,1fr] items-center">
-            <img src="${p.sprites.front_default}" class="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl bg-white p-2 shadow" alt="${p.name}"/>
-            <div class="space-y-3">
-              <h3 class="text-2xl font-semibold capitalize">${p.name} <small class="text-gray-500 font-normal">#${p.id}</small></h3>
-              <p class="text-sm text-slate-600"><span class="font-semibold text-slate-800">Tipos:</span> ${p.types.map(t=>t.type.name).join(', ')}</p>
-              <p class="text-sm text-slate-600"><span class="font-semibold text-slate-800">Altura:</span> ${(p.height/10).toFixed(1)} m · <span class="font-semibold text-slate-800">Peso:</span> ${(p.weight/10).toFixed(1)} kg</p>
-              <p class="text-xs text-slate-400 uppercase tracking-wide">Datos base de PokéAPI</p>
+          <div class="flex gap-4 items-center">
+            <img src="${p.sprites.front_default}" class="w-20 h-20" alt="${p.name}"/>
+            <div>
+              <h3 class="text-lg font-semibold capitalize">${p.name} <small class="text-gray-600">#${p.id}</small></h3>
+              <p class="text-sm text-gray-700">Tipos: ${p.types.map(t=>t.type.name).join(', ')}</p>
+              <p class="text-sm text-gray-700">Altura: ${p.height} · Peso: ${p.weight}</p>
             </div>
-          </article>`;
-                if (status) status.textContent = '';
-            } catch (e) {
-                out.innerHTML = '<p class="text-red-600">No pudimos encontrar ese Pokémon.</p>';
-                if (status) status.textContent = 'Error o no encontrado';
-            }
-        }
-
-        btn.addEventListener('click', () => {
-            renderPokemon(input?.value);
+          </div>`;
+                if (s) s.textContent = '';
+            }catch(e){ if (s) s.textContent = 'Error o no encontrado'; }
         });
+    }
 
-        if (input && !input.value) input.value = info.placeholder;
-        renderPokemon(input?.value);
-    } else if (recurso === 'paises') {
-        const btn = q('#country-go');
-        const input = q('#country-q');
-        const status = q('#country-status');
-        if (!btn) return;
-
-        async function renderCountry(term) {
-            const query = (term || input?.value || '').trim() || info.placeholder;
-            out.innerHTML = '<p class="text-slate-400">Buscando país...</p>';
-            if (status) status.textContent = `Cargando ${query}...`;
-            try {
-                const data = await api.paisesPorNombre(query);
-                const c = data[0];
+    if(recurso === 'paises'){
+        const btn = q('#country-go'); if (!btn) return;
+        btn.addEventListener('click', async () => {
+            const s = q('#country-status');
+            const term = (q('#country-q')?.value || '').trim();
+            out.innerHTML = ''; if (s) s.textContent = 'Cargando…';
+            try{
+                const dato = await api.paisesPorNombre(term || 'Chile');
+                const c = dato[0];
                 out.innerHTML = `
-          <article class="space-y-3">
-            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-              <img src="${c.flags?.png || c.flags?.svg || ''}" class="w-14 h-9 object-cover rounded-md shadow" alt="Bandera de ${c.name.common}"/>
-              <div>
-                <h3 class="text-xl font-semibold">${c.name.common} <small class="text-gray-500 font-normal">(${c.cca2})</small></h3>
-                <p class="text-sm text-slate-600">${c.region || 'Sin región'} · Capital: ${c.capital ? c.capital.join(', ') : '-'}</p>
-              </div>
+          <div class="space-y-2">
+            <div class="flex items-center gap-3">
+              <img src="${c.flags?.png || c.flags?.svg || ''}" class="w-8 h-5 object-cover rounded-sm" alt="flag"/>
+              <h3 class="text-lg font-semibold">${c.name.common} <small class="text-gray-600">(${c.cca2})</small></h3>
             </div>
-            <p class="text-sm text-slate-600"><span class="font-semibold text-slate-800">Población:</span> ${nf.format(c.population)}</p>
-          </article>`;
-                if (status) status.textContent = '';
-            } catch (e) {
-                out.innerHTML = '<p class="text-red-600">No pudimos encontrar ese país.</p>';
-                if (status) status.textContent = 'Error o no encontrado';
-            }
-        }
-
-        btn.addEventListener('click', () => {
-            renderCountry(input?.value);
+            <p class="text-sm text-gray-700">${c.region} · Capital: ${c.capital? c.capital.join(', ') : '—'}</p>
+            <p class="text-sm text-gray-700">Población: ${nf.format(c.population)}</p>
+          </div>`;
+                if (s) s.textContent = '';
+            }catch(e){ if (s) s.textContent = 'Error o no encontrado'; }
         });
+    }
 
-        if (input && !input.value) input.value = info.placeholder;
-        renderCountry(input?.value);
-    } else if (recurso === 'clima') {
-        const status = q('#meteo-status');
+    if (recurso === 'clima') {
+        const s = q('#meteo-status');
         const btn = q('#meteo-go');
-        const input = q('#city');
         if (!btn) return;
 
-        async function renderCity(nombre) {
-            const query = (nombre || input?.value || '').trim() || info.placeholder;
-            out.innerHTML = '<p class="text-slate-400">Consultando clima...</p>';
-            if (status) status.textContent = `Cargando clima de ${query}...`;
-            try {
-                const { g, d } = await buscarClimaCiudad(query);
+        async function renderCity(nombre){
+            out.innerHTML = ''; if (s) s.textContent = `Cargando clima de ${nombre}…`;
+            try{
+                const { g, d } = await buscarClimaCiudad(nombre);
                 const c = d.current;
                 out.innerHTML = `
-          <article class="space-y-3">
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h3 class="text-xl font-semibold">${g.label}</h3>
-                <p class="text-sm text-slate-600">Coordenadas: ${g.lat.toFixed(2)}, ${g.lon.toFixed(2)}</p>
-              </div>
-              <div class="text-sm text-slate-600 bg-slate-100 rounded-xl px-4 py-2 w-max">
-                <span class="font-semibold text-slate-800 text-lg">${Math.round(c.temperature_2m)}°C</span>
-                <span class="ml-3">Viento: ${Number(c.wind_speed_10m).toFixed(1)} m/s</span>
-              </div>
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold">${g.label}</h3>
+              <p class="text-sm text-gray-700">Coordenadas: ${g.lat.toFixed(2)}, ${g.lon.toFixed(2)}</p>
             </div>
-          </article>`;
-                if (status) status.textContent = '';
-            } catch (e) {
-                out.innerHTML = '<p class="text-red-600">No pudimos obtener ese clima.</p>';
-                if (status) status.textContent = (e?.message || '').includes('no encontrada') ? 'Ciudad no encontrada' : 'Error consultando clima';
+            <div class="text-right">
+              <p class="text-sm text-gray-700"><strong>${Math.round(c.temperature_2m)} °C</strong></p>
+              <p class="text-sm text-gray-700">Viento: ${Number(c.wind_speed_10m).toFixed(1)} m/s</p>
+            </div>
+          </div>`;
+                if (s) s.textContent = '';
+            }catch(e){
+                if (s) s.textContent = (e?.message || '').includes('no encontrada') ? 'Ciudad no encontrada' : 'Error consultando clima';
             }
         }
 
         btn.addEventListener('click', () => {
-            const query = (input?.value || '').trim();
-            if (!query) {
-                if (status) status.textContent = 'Ingresa una ciudad';
-                return;
-            }
-            renderCity(query);
+            const city = (q('#city')?.value || '').trim();
+            if (!city) { if (s) s.textContent = 'Escribe una ciudad'; return; }
+            renderCity(city);
         });
 
         document.querySelectorAll('.city-quick').forEach(b => {
-            b.addEventListener('click', () => {
-                const city = b.textContent.trim();
-                if (input) input.value = city;
-                renderCity(city);
-            });
+            b.addEventListener('click', () => renderCity(b.textContent));
         });
 
-        if (input && !input.value) input.value = info.placeholder;
-        const ciudades = info.ciudades || ['La Serena', 'Coquimbo', 'Calama'];
-        out.innerHTML = '<p class="text-slate-400">Cargando ciudades...</p>';
-        Promise.allSettled(ciudades.map(buscarClimaCiudad))
-            .then(resultados => {
+        // Carga inicial: las 3 ciudades
+        (async () => {
+            out.innerHTML = '<p class="text-gray-500">Cargando ciudades…</p>';
+            try{
+                const ciudades = ['La Serena', 'Coquimbo', 'Calama'];
+                const resultados = await Promise.allSettled(ciudades.map(buscarClimaCiudad));
                 const ok = resultados.filter(r => r.status === 'fulfilled');
-                if (ok.length === 0) {
-                    out.innerHTML = '<p class="text-red-600">Error de red o API.</p>';
-                    if (status) status.textContent = '';
-                    return;
-                }
+                if (ok.length === 0) { out.innerHTML = '<p class="text-red-600">Error de red/API</p>'; if (s) s.textContent = ''; return; }
                 out.innerHTML = ok.map(r => {
                     const { g, d } = r.value;
                     const c = d.current;
                     return `
-          <div class="card-mini">
-            <span class="font-semibold">${g.label}</span>
-            <span class="text-sm text-slate-600">${Math.round(c.temperature_2m)}°C · ${Number(c.wind_speed_10m).toFixed(1)} m/s</span>
-          </div>`;
+            <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50 border">
+              <span><strong>${g.label}</strong></span>
+              <span class="text-sm">${Math.round(c.temperature_2m)}°C · ${Number(c.wind_speed_10m).toFixed(1)} m/s</span>
+            </div>`;
                 }).join('');
-                if (status) status.textContent = '';
-            })
-            .catch(() => {
-                out.innerHTML = '<p class="text-red-600">Error de red o API.</p>';
-            });
-    } else if (recurso === 'feriados') {
-        const btn = q('#holi-go');
-        const iso = q('#iso');
-        const anio = q('#anio');
-        const status = q('#holi-status');
-        if (!btn) return;
+                if (s) s.textContent = '';
+            }catch{
+                out.innerHTML = '<p class="text-red-600">Error de red/API</p>';
+            }
+        })();
+    }
 
-        const valoresIniciales = () => {
-            const codigo = ((iso?.value || info.iso || 'CL') + '').trim().toUpperCase();
-            const yearStr = ((anio?.value || info.anio || new Date().getFullYear()) + '').trim();
-            return { codigo, yearStr, year: Number(yearStr) };
-        };
-
-        async function renderHolidays() {
-            const { codigo, yearStr, year } = valoresIniciales();
-            if (!/^[A-Z]{2}$/.test(codigo) || yearStr.length !== 4 || Number.isNaN(year)) {
-                if (status) status.textContent = 'Código ISO-2 y año de 4 dígitos';
+    if(recurso === 'feriados'){
+        const btn = q('#holi-go'); if (!btn) return;
+        btn.addEventListener('click', async () => {
+            const s = q('#holi-status');
+            const iso = (q('#iso')?.value || '').toUpperCase();
+            const year = Number(q('#anio')?.value);
+            if(!/^[A-Z]{2}$/.test(iso) || String(year).length !== 4){
+                if (s) s.textContent = 'Código ISO-2 + año de 4 dígitos';
                 return;
             }
-            out.innerHTML = '<p class="text-slate-400">Buscando feriados...</p>';
-            if (status) status.textContent = `Cargando ${codigo} ${yearStr}...`;
-            try {
-                const list = await api.feriados(codigo, year);
-                if (!Array.isArray(list) || list.length === 0) {
-                    out.innerHTML = '<p class="text-slate-500">Sin feriados disponibles.</p>';
-                } else {
-                    out.innerHTML = list.slice(0, 10).map(h => `
-          <div class="card-mini">
-            <span><strong>${h.localName}</strong> <small class="text-slate-500">(${h.name})</small></span>
-            <span class="text-xs text-slate-500">${h.date}</span>
+            out.innerHTML = ''; if (s) s.textContent = 'Cargando…';
+            try{
+                const list = await api.feriados(iso, year);
+                out.innerHTML = list.slice(0,10).map(h => `
+          <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50 border">
+            <span><strong>${h.localName}</strong> <small class="text-gray-600">(${h.name})</small></span>
+            <span class="text-xs">${h.date}</span>
           </div>`).join('');
-                }
-                if (status) status.textContent = '';
-            } catch (e) {
-                out.innerHTML = '<p class="text-red-600">Error consultando Nager.Date</p>';
-                if (status) status.textContent = 'Error consultando Nager.Date';
-            }
-        }
-
-        btn.addEventListener('click', () => {
-            renderHolidays();
+                if (s) s.textContent = '';
+            }catch(e){ if (s) s.textContent = 'Error consultando Nager.Date'; }
         });
-
-        if (iso && !iso.value) iso.value = info.iso || 'CL';
-        if (anio && !anio.value) anio.value = (info.anio || new Date().getFullYear()).toString();
-        renderHolidays();
     }
 }
 
