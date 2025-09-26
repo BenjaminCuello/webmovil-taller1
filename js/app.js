@@ -1,4 +1,4 @@
-// Utils y Config
+﻿// Utils y Config
 const q = (sel, root=document) => root.querySelector(sel);
 const nf = new Intl.NumberFormat('es-CL');
 
@@ -251,6 +251,7 @@ function onDetalle(){
     const titulo = q('#titulo-detalle');
     if (titulo) titulo.textContent = `Detalle — ${recurso}`;
     buildControles(recurso);
+    setAriaLive(['#poke-status', '#country-status', '#meteo-status', '#holi-status']);
 
     const out = q('#contenedor-detalle');
     if (!out) return;
@@ -396,3 +397,6 @@ function onDetalle(){
 const page = location.pathname.split('/').pop();
 if(page === 'index.html' || page === '') onIndex();
 if(page === 'detalle.html') onDetalle();
+
+
+
