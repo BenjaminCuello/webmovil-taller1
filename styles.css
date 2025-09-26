@@ -1,4 +1,106 @@
-﻿@media (min-width: 1024px) {
-    header h1 { font-size: 1.5rem; }
+﻿:root {
+    --card-border: rgba(37, 99, 235, 0.15);
+    --card-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+    --card-shadow-hover: 0 20px 50px rgba(37, 99, 235, 0.18);
 }
 
+.resource-card {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.resource-card:hover,
+.resource-card:focus-within {
+    transform: translateY(-4px);
+    box-shadow: var(--card-shadow-hover);
+}
+
+.resource-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 9999px;
+    padding: 0.15rem 0.55rem;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.resource-data {
+    min-height: 4.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.resource-link {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 600;
+    color: rgb(37, 99, 235);
+    text-decoration: none;
+    padding: 0.4rem 0.75rem;
+    border-radius: 9999px;
+    border: 1px solid rgb(37, 99, 235);
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.resource-link:hover,
+.resource-link:focus {
+    background: rgb(37, 99, 235);
+    color: white;
+}
+
+@media (max-width: 520px) {
+    .resource-card {
+        padding: 1.25rem;
+    }
+
+    .resource-link {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (min-width: 1024px) {
+    header h1 {
+        font-size: 2rem;
+    }
+}
+
+.card-mini {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 14px;
+    background: rgba(248, 250, 252, 0.95);
+    border: 1px solid rgba(15, 23, 42, 0.05);
+}
+
+.card-mini img {
+    border-radius: 9999px;
+    box-shadow: 0 6px 15px rgba(15, 23, 42, 0.12);
+}
+
+.card-mini span,
+.card-mini strong,
+.card-mini p {
+    color: rgb(51, 65, 85);
+}
+
+@media (max-width: 520px) {
+    .card-mini {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

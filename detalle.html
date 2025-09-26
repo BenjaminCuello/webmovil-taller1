@@ -7,23 +7,38 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="min-h-screen bg-slate-100 text-slate-900 flex flex-col">
 
-<!-- Header -->
-<header class="bg-blue-600 text-white p-4 text-center">
-    <h1 id="titulo-detalle" class="text-xl font-bold">Detalle</h1>
+<header class="bg-blue-600 text-white shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 py-6 sm:py-8 flex flex-col gap-3">
+        <a href="index.html" class="text-sm text-blue-100 hover:text-white transition-colors w-max">Volver al inicio</a>
+        <div>
+            <h1 id="titulo-detalle" class="text-2xl sm:text-3xl font-bold tracking-tight">Detalle</h1>
+            <p id="descripcion-detalle" class="mt-2 text-sm sm:text-base text-blue-100/90 max-w-2xl">
+                Selecciona un recurso para revisar información ampliada.
+            </p>
+        </div>
+    </div>
 </header>
 
-<main class="p-4 max-w-3xl mx-auto space-y-6">
-    <section id="controles" class="bg-white rounded-xl shadow p-4"></section>
+<main class="flex-1 w-full">
+    <section class="max-w-5xl mx-auto px-4 py-8 space-y-6">
+        <section id="controles" class="bg-white/90 backdrop-blur border border-blue-100 rounded-2xl shadow-sm p-6"></section>
 
-    <section id="contenedor-detalle" class="bg-white rounded-xl shadow p-4 space-y-3"></section>
-
-    <div class="text-center">
-        <a href="index.html" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Volver</a>
-    </div>
+        <section id="contenedor-detalle" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4 min-h-[160px]"></section>
+    </section>
 </main>
+
+<footer class="bg-blue-600 text-white text-sm">
+    <div class="max-w-5xl mx-auto px-4 py-4 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-2">
+        <span>© 2025 InfoMóvil — Todos los derechos reservados</span>
+        <span class="text-blue-100">Ingeniería UCN · Taller Web Móvil</span>
+    </div>
+</footer>
 
 <script src="js/app.js" type="module"></script>
 </body>
 </html>
+
+
+

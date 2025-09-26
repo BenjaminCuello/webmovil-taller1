@@ -1,63 +1,104 @@
-﻿<!DOCTYPE html>
+﻿740<!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>InfoMóvil - Landing</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-900">
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900 flex flex-col">
+    <header class="bg-blue-600 text-white shadow-sm">
+      <div class="max-w-6xl mx-auto px-4 py-6 sm:py-8">
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">InfoMóvil</h1>
+        <p class="mt-2 text-sm sm:text-base text-blue-100 max-w-2xl">
+          Datos actualizados de Pokémon, países, clima y Feriados para explorar desde tu móvil,
+          tablet o escritorio.
+        </p>
+      </div>
+    </header>
 
-<!-- Header -->
-<header class="bg-blue-600 text-white p-4 text-center">
-    <h1 class="text-xl font-bold">InfoMóvil</h1>
-    <p class="text-sm">Tu información al alcance de la mano</p>
-</header>
+    <main class="flex-1 w-full">
+      <section class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+        <article
+          class="bg-white/80 backdrop-blur border border-blue-100 rounded-2xl p-6 shadow-sm text-sm sm:text-base text-slate-600"
+        >
+          <h2 class="text-lg sm:text-xl font-semibold text-slate-900">Recursos disponibles</h2>
+          <p class="mt-2">
+            Explora un resumen en la vista principal y profundiza en cada recurso sin recargar la
+            página.
+          </p>
+        </article>
 
-<!-- Contenedor principal -->
-<main class="p-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-    <!-- Pokémon -->
-    <section class="bg-white rounded-xl shadow p-4">
-        <h2 class="text-lg font-semibold">Pokémon</h2>
-        <div id="contenedor-pokemon" class="mt-2 text-sm text-gray-600">
-            <p class="text-gray-500">Cargando...</p>
+        <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+          <section class="resource-card">
+            <div class="flex items-center justify-between gap-2">
+              <h2 class="text-lg font-semibold text-slate-900">Pokémon</h2>
+              <span class="resource-tag">API</span>
+            </div>
+            <p class="mt-1 text-sm text-slate-500">
+              Consulta personajes destacados y descubre detalles al instante.
+            </p>
+            <div id="contenedor-pokemon" class="resource-data">
+              <p class="text-slate-400">Cargando...</p>
+            </div>
+            <a href="detalle.html?recurso=pokemon" class="resource-link">Ver más</a>
+          </section>
+
+          <section class="resource-card">
+            <div class="flex items-center justify-between gap-2">
+              <h2 class="text-lg font-semibold text-slate-900">Países</h2>
+              <span class="resource-tag">API</span>
+            </div>
+            <p class="mt-1 text-sm text-slate-500">
+              Accede a datos esenciales de países y regiones del mundo.
+            </p>
+            <div id="contenedor-paises" class="resource-data">
+              <p class="text-slate-400">Cargando...</p>
+            </div>
+            <a href="detalle.html?recurso=paises" class="resource-link">Ver más</a>
+          </section>
+
+          <section class="resource-card">
+            <div class="flex items-center justify-between gap-2">
+              <h2 class="text-lg font-semibold text-slate-900">Clima</h2>
+              <span class="resource-tag">API</span>
+            </div>
+            <p class="mt-1 text-sm text-slate-500">
+              Sigue condiciones actuales en distintas ciudades chilenas.
+            </p>
+            <div id="contenedor-clima" class="resource-data">
+              <p class="text-slate-400">Cargando...</p>
+            </div>
+            <a href="detalle.html?recurso=clima" class="resource-link">Ver más</a>
+          </section>
+
+          <section class="resource-card">
+            <div class="flex items-center justify-between gap-2">
+              <h2 class="text-lg font-semibold text-slate-900">Feriados</h2>
+              <span class="resource-tag">API</span>
+            </div>
+            <p class="mt-1 text-sm text-slate-500">
+              Revisa los próximos Feriados oficiales por país y año.
+            </p>
+            <div id="contenedor-feriados" class="resource-data">
+              <p class="text-slate-400">Cargando...</p>
+            </div>
+            <a href="detalle.html?recurso=feriados" class="resource-link">Ver más</a>
+          </section>
         </div>
-        <a href="detalle.html?recurso=pokemon" class="block mt-4 text-blue-500 font-medium hover:underline">Ver más</a>
-    </section>
+      </section>
+    </main>
 
-    <!-- Tarjeta 2: Países -->
-    <section class="bg-white rounded-xl shadow p-4">
-        <h2 class="text-lg font-semibold">Países</h2>
-        <div id="contenedor-paises" class="mt-2 text-sm text-gray-600">
-            <p class="text-gray-500">Cargando...</p>
-        </div>
-        <a href="detalle.html?recurso=paises" class="block mt-4 text-blue-500 font-medium hover:underline">Ver más</a>
-    </section>
+    <footer class="bg-blue-600 text-white text-sm">
+      <div
+        class="max-w-6xl mx-auto px-4 py-4 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-2"
+      >
+        <span>© 2025 InfoMóvil — Todos los derechos reservados</span>
+        <span class="text-blue-100">Ingeniería UCN · Taller Web Móvil</span>
+      </div>
+    </footer>
 
-    <!-- Tarjeta 3: Clima -->
-    <section class="bg-white rounded-xl shadow p-4">
-        <h2 class="text-lg font-semibold">Clima</h2>
-        <div id="contenedor-clima" class="mt-2 text-sm text-gray-600">
-            <p class="text-gray-500">Cargando...</p>
-        </div>
-        <a href="detalle.html?recurso=clima" class="block mt-4 text-blue-500 font-medium hover:underline">Ver más</a>
-    </section>
-
-    <!-- Tarjeta 4: Feriados -->
-    <section class="bg-white rounded-xl shadow p-4">
-        <h2 class="text-lg font-semibold">Feriados</h2>
-        <div id="contenedor-feriados" class="mt-2 text-sm text-gray-600">
-            <p class="text-gray-500">Cargando...</p>
-        </div>
-        <a href="detalle.html?recurso=feriados" class="block mt-4 text-blue-500 font-medium hover:underline">Ver más</a>
-    </section>
-</main>
-
-<!-- Footer -->
-<footer class="bg-blue-600 text-white p-4 text-center text-sm mt-8">
-    © 2025 InfoMóvil - Todos los derechos reservados
-</footer>
-
-<script src="js/app.js" type="module"></script>
-</body>
+    <script src="js/app.js" type="module"></script>
+  </body>
 </html>
