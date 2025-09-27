@@ -60,20 +60,21 @@ InfoMóvil es una aplicación web móvil responsiva que centraliza información 
 
 ## Estructura del Proyecto
 
+```
 webmovil-taller1-main/
-├── index.html # Página principal y vista de detalle
-├── styles.css # Estilos personalizados y media queries
-├── README.md # Documentación del proyecto
-└── js/ # Código JavaScript modularizado
-├── main.js # Router y controlador principal
-├── utils.js # Funciones utilitarias
-├── api.js # Funciones de consumo de APIs
-├── ui.js # Manejo de interfaz de usuario
-├── pokemon.js # Lógica específica de Pokémon
-├── countries.js # Lógica específica de países
-├── weather.js # Lógica específica de clima
-└── holidays.js # Lógica específica de feriados
-
+├── index.html       # Página principal y vista de detalle
+├── styles.css       # Estilos personalizados y media queries
+├── README.md        # Documentación del proyecto
+└── js/              # Código JavaScript modularizado
+    ├── main.js      # Router y controlador principal
+    ├── utils.js     # Funciones utilitarias
+    ├── api.js       # Funciones de consumo de APIs
+    ├── ui.js        # Manejo de interfaz de usuario
+    ├── pokemon.js   # Lógica específica de Pokémon
+    ├── countries.js # Lógica específica de países
+    ├── weather.js   # Lógica específica de clima
+    └── holidays.js  # Lógica específica de feriados
+```
 ## Consumo de APIs
 
 - 4 APIs públicas integradas
