@@ -97,6 +97,6 @@ División de tareas y organización:
 - **Opción 1:** Abrir `index.html` directamente en el navegador
 - **Opción 2:** Usar la extensión **Live Server** en VS Code
 
-## <img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/0925bbb5-e158-4a53-a7a7-44f48cb05083" />
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/0925bbb5-e158-4a53-a7a7-44f48cb05083" />
 
 **Proyecto desarrollado para el curso Introducción al Desarrollo Web Móvil - Universidad Católica del Norte (UCN) 2025**
