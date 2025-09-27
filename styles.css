@@ -1,4 +1,111 @@
-﻿@media (min-width: 1024px) {
-    header h1 { font-size: 1.5rem; }
+﻿body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  line-height: 1.6;
 }
 
+.tarjeta {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-height: 280px;
+}
+
+.tarjeta:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.tarjeta-datos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 90px;
+}
+
+.tarjeta-enlace {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  border: 1px solid #2563eb;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.tarjeta-enlace:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.card-mini {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
+  background: rgba(248, 250, 252, 0.95);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+@media (max-width: 600px) {
+  body {
+    padding-bottom: 3rem;
+  }
+  .tarjeta {
+    padding: 1.25rem;
+  }
+  .tarjeta-enlace {
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  main {
+    padding: 3rem 2rem;
+  }
+  .tarjeta {
+    min-height: 260px;
+  }
+}
+
+button:focus,
+input:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 480px) {
+  .tarjeta {
+    padding: 1rem;
+    min-height: 240px;
+  }
+
+  .card-mini {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  header h1 {
+    font-size: 2.3rem;
+  }
+
+  .tarjeta {
+    min-height: 320px;
+  }
+}
